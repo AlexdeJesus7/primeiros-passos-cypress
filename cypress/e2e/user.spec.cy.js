@@ -1,42 +1,26 @@
 import userData from '../fixtures/userData.json'
+import loginPage from '../pages/loginPage.js'
+import dashboardPage from '../pages/dashboardPage.js'
+import myInfoPage from '../pages/myInfoPage.js'
+
+const loginPage = new loginPage()
+const dashboardPage = new dashboardPage()
+const myInfoPage = new myInfoPage()
 
 describe('Orange HRM Tests', () => {
 
   const selectorsList = {
-    usernameField: '[name="username"]',
-    passwordField: '[name="password"]',
-    loginButton: '[type="submit"]',
-    sectionTitleTopBar: '.oxd-topbar-header-breadcrumb-module',
-    dashboardgrid: '.orangehrm-dashboard-grid',
-    wrongCredentialAlert: '.oxd-alert',
-    myInfoButton: '[href="/web/index.php/pim/viewMyDetails"]',
-    firstNameField:'[name="firstName"]',
-    lastNameField: '[name="lastName"]',
-    genericField: '.oxd-input--active',
-    dateField: '[placeholder="yyyy-dd-mm"]',
-    dateCloseButton: '.--close',
-    submitButton: '[type="submit"]'
 
   }
 
   it.only('User Info Update - Sucess', () => {
-    cy.visit('/auth/login')
-    cy.get(selectorsList.usernameField).type(userData.userSuccess.username)
-    cy.get(selectorsList.passwordField).type(userData.userSuccess.password)
-    cy.get(selectorsList.loginButton).click()
-    cy.location('pathname').should('equal', '/web/index.php/dashboard/index')
-    cy.get(selectorsList.dashboardgrid)
-    cy.get(selectorsList.myInfoButton).click()
-    cy.get(selectorsList.firstNameField).clear().type('FirstnameTest')
-    cy.get(selectorsList.lastNameField).clear().type('LastNameTest')
-    cy.get(selectorsList.genericField).eq(3).clear().type('Employee')
-    cy.get(selectorsList.genericField).eq(4).clear().type('OtherIdTest')
-    cy.get(selectorsList.genericField).eq(5).clear().type('DrivesLicenseTest')
-    cy.get(selectorsList.dateField).eq(0).clear().type('2026-25-04')
-    cy.get(selectorsList.dateCloseButton).click()
-    cy.get(selectorsList.submitButton).eq(0).click()
-    cy.get('body').should('contain', 'Successfully Updated')
-    cy.get('.oxd-toast-close')
+    loginPage.accessLoginPage()
+    loginPage.loginWithUser(userData.userSuccess.username, userData.userSuccess.password)
+
+    dashboardPage.confirmDashboardAccess()
+
+    myInfoPage.fillInfo()
+
   })
   it('login - Fail', () => {
     cy.visit('/auth/login')
